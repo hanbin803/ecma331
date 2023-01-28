@@ -57,11 +57,11 @@ pander(summary(fit2))
 delta0 = fit2$coefficients[1]
 delta = fit2$coefficients[2]
 
-simdata[,b := delta0 + delta*Z ]
+simdata[,b := -delta0 - delta*Z ]
 
 sig = sqrt(var(simdata$xi)*(N-1)/N)
 
-simdata[,m := sig*(dnorm(b, mean=0, sd=1) / (1 - pnorm(b, mean=0, sd=1))]
+simdata[,m := sig*(dnorm(b, mean=0, sd=1))/(1-pnorm(b, mean=0, sd=1))]
 
 pander(summary(simdata[,lm(log(h) ~ lw + X + m)]))
 
@@ -115,12 +115,14 @@ pander(summary(simdata[,lm(log(h) ~ lw + X)]))
 fit2 = glm(lfp ~ Z,simdata,family = binomial(link = "probit"))
 
 pander(summary(fit2))
-delta0 = fit2$coefficients[1]
-delta = fit2$coefficients[2]
+deltarcs0 = fit2$coefficients[1]
+deltarcs = fit2$coefficients[2]
 
-simdata[, b := -delta0 - delta*Z ]
-simdata[, m := 1 - (dnorm(b, mean=1, sd=1) / pnorm(b, mean=1, sd=1))]
-View(simdata)
+sdsamp = sqrt(var(simdata$xi)*(N-1)/N)
+
+
+simdata[, b := deltarcs0 + deltarcs*Z ]
+simdata[, m := 1 - ((dnorm(b, mean=1, sd=1) / pnorm(b, mean=1, sd=1)))]
 
 
 
